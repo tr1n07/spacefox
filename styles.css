@@ -1,15 +1,32 @@
 #game-container {
-    width: 800px;
-    height: 600px;
+    width: 100vmin;
+    height: 150vmin;
     border: 1px solid black;
     position: relative;
     overflow: hidden;
+    background: url('images/background.jpg') no-repeat center center/cover;
 }
 
 #spacefox {
-    width: 50px;
-    height: 50px;
+    width: 10vmin;
+    height: 10vmin;
     position: absolute;
-    bottom: 0;
-    left: 375px;
+    bottom: 5vmin;
+    left: 45vmin;
+}
+
+#lives {
+    position: absolute;
+    top: 2vmin;
+    left: 2vmin;
+    font-size: 5vmin;
+    color: white;
+}
+
+#game-over {
+    position: absolute;
+    top: 50vmin;
+    left: 25vmin;
+    font-size: 10vmin;
+    color: red;
 }
