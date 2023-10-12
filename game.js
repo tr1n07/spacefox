@@ -14,7 +14,7 @@ function moveSpacefox(event) {
     }
 
     if (event.key === 'ArrowRight') {
-        if (position < document.getElementById('game-container').offsetWidth - 50) {
+        if (position < window.innerWidth - 50) {
             spacefox.style.left = (position + 50) + 'px';
         }
     }
@@ -27,13 +27,13 @@ function createAsteroid() {
     const asteroid = document.createElement('div');
     asteroid.innerHTML = '<img src="images/asteroid.png" alt="Asteroid" width="50" height="50">';
     asteroid.style.position = 'absolute';
-    asteroid.style.top = '0px';
-    asteroid.style.left = `${Math.random() * 750}px`;
+    asteroid.style.top = '-50px';
+    asteroid.style.left = `${Math.random() * (window.innerWidth - 50)}px`;
     gameContainer.appendChild(asteroid);
     
     let position = 0;
     const asteroidInterval = setInterval(() => {
-        if (position < 600) {
+        if (position < window.innerHeight) {
             position += 10;
             asteroid.style.top = position + 'px';
             checkCollision(asteroid, asteroidInterval);
@@ -68,5 +68,6 @@ function loseLife() {
 }
 
 function updateLivesDisplay() {
-    document.getElementById('lives-count').innerText = lives;
+    const livesContainer = document.getElementById('lives');
+    livesContainer.innerText = '♥'.repeat(lives);
 }
