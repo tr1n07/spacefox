@@ -50,15 +50,97 @@
     <script>
         const gameContainer = document.getElementById('gameContainer');
 
-        // Display lives as hearts
+        class Spacefox {
+            constructor() {
+                this.element = document.createElement('div');
+                this.element.className = 'spacefox';
+                this.width = 50;
+                this.height = 50;
+                this.x = 175;
+                this.element.style.left = `${this.x}px`;
+                gameContainer.appendChild(this.element);
+            }
+
+            move(direction) {
+                if (direction === 'left' && this.x > 0) {
+                    this.x -= 15;
+                } else if (direction === 'right' && this.x < 350) {
+                    this.x += 15;
+                }
+                this.element.style.left = `${this.x}px`;
+            }
+        }
+
+        class Asteroid {
+            constructor() {
+                this.element = document.createElement('div');
+                this.element.className = 'asteroid';
+                this.width = 50;
+                this.height = 50;
+                this.x = Math.random() * 350;
+                this.y = -50;
+                this.element.style.left = `${this.x}px`;
+                this.element.style.top = `${this.y}px`;
+                gameContainer.appendChild(this.element);
+            }
+
+            fall() {
+                this.y += 5;
+                this.element.style.top = `${this.y}px`;
+
+                if (this.y > 600) {
+                    this.element.remove();
+                }
+            }
+        }
+
+        const spacefox = new Spacefox();
+
+        let asteroids = [];
+        let lives = 3;
+
         for (let i = 1; i <= 3; i++) {
             const heart = document.createElement('div');
             heart.className = `heart heart${i}`;
             gameContainer.appendChild(heart);
         }
 
-        // ... (The rest of your JavaScript code remains unchanged)
+        function gameLoop() {
+            if (Math.random() < 0.01) {
+                const asteroid = new Asteroid();
+                asteroids.push(asteroid);
+            }
 
+            asteroids.forEach((asteroid, index) => {
+                asteroid.fall();
+
+                if (asteroid.y + asteroid.height > 550 && 
+                    asteroid.x + asteroid.width > spacefox.x && 
+                    asteroid.x < spacefox.x + spacefox.width) {
+                        lives--;
+                        document.querySelector(`.heart${lives+1}`).style.display = 'none';
+                        asteroid.element.remove();
+                        asteroids.splice(index, 1);
+                }
+
+                if (lives === 0) {
+                    alert('Game Over!');
+                    location.reload();
+                }
+            });
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                spacefox.move('left');
+            } else if (e.key === 'ArrowRight') {
+                spacefox.move('right');
+            }
+        });
     </script>
 </body>
 </html>
