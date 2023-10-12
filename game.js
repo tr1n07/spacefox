@@ -7,16 +7,12 @@ function moveSpacefox(event) {
     const spacefox = document.getElementById('spacefox');
     let position = spacefox.offsetLeft;
 
-    if (event.key === 'ArrowLeft') {
-        if (position > 0) {
-            spacefox.style.left = (position - 50) + 'px';
-        }
+    if (event.key === 'ArrowLeft' && position > 0) {
+        spacefox.style.left = (position - 50) + 'px';
     }
 
-    if (event.key === 'ArrowRight') {
-        if (position < window.innerWidth - 50) {
-            spacefox.style.left = (position + 50) + 'px';
-        }
+    if (event.key === 'ArrowRight' && position < 750) {
+        spacefox.style.left = (position + 50) + 'px';
     }
 }
 
@@ -25,38 +21,35 @@ setInterval(createAsteroid, 2000);
 function createAsteroid() {
     const gameContainer = document.getElementById('game-container');
     const asteroid = document.createElement('div');
-    asteroid.innerHTML = '<img src="images/asteroid.png" alt="Asteroid" width="50" height="50">';
-    asteroid.style.position = 'absolute';
-    asteroid.style.top = '-50px';
-    asteroid.style.left = `${Math.random() * (window.innerWidth - 50)}px`;
+    asteroid.className = 'asteroid';
+    asteroid.style.left = `${Math.floor(Math.random() * 750)}px`;
     gameContainer.appendChild(asteroid);
-    
-    let position = 0;
-    const asteroidInterval = setInterval(() => {
-        if (position < window.innerHeight) {
-            position += 10;
-            asteroid.style.top = position + 'px';
-            checkCollision(asteroid, asteroidInterval);
-        } else {
+
+    const moveAsteroid = setInterval(() => {
+        asteroid.style.top = (asteroid.offsetTop + 10) + 'px';
+
+        if (asteroid.offsetTop > 600) {
             asteroid.remove();
-            clearInterval(asteroidInterval);
+            clearInterval(moveAsteroid);
+        }
+
+        const spacefox = document.getElementById('spacefox');
+        if (isColliding(asteroid, spacefox)) {
+            asteroid.remove();
+            clearInterval(moveAsteroid);
+            loseLife();
         }
     }, 100);
 }
 
-function checkCollision(asteroid, asteroidInterval) {
-    const spacefox = document.getElementById('spacefox');
-    const rect1 = asteroid.getBoundingClientRect();
-    const rect2 = spacefox.getBoundingClientRect();
-
-    if (!(rect1.right < rect2.left || 
-          rect1.left > rect2.right || 
-          rect1.bottom < rect2.top || 
-          rect1.top > rect2.bottom)) {
-        asteroid.remove();
-        clearInterval(asteroidInterval);
-        loseLife();
-    }
+function isColliding(div1, div2) {
+    const rect1 = div1.getBoundingClientRect();
+    const rect2 = div2.getBoundingClientRect();
+    
+    return !(rect1.top > rect2.bottom || 
+             rect1.right < rect2.left || 
+             rect1.bottom < rect2.top || 
+             rect1.left > rect2.right);
 }
 
 function loseLife() {
@@ -68,6 +61,5 @@ function loseLife() {
 }
 
 function updateLivesDisplay() {
-    const livesContainer = document.getElementById('lives');
-    livesContainer.innerText = '♥'.repeat(lives);
+    document.getElementById('lives').textContent = '♥'.repeat(lives);
 }
