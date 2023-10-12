@@ -57,7 +57,7 @@
                 this.width = 100;
                 this.height = 200;
                 this.x = 350;
-                this.y = 0;
+                this.y = 400;
                 this.element.style.left = `${this.x}px`;
                 gameContainer.appendChild(this.element);
             }
@@ -96,7 +96,6 @@
         }
 
         const spacefox = new Spacefox();
-
         let asteroids = [];
         let lives = 3;
 
@@ -104,6 +103,16 @@
             const heart = document.createElement('div');
             heart.className = `heart heart${i}`;
             gameContainer.appendChild(heart);
+        }
+
+        function checkCollision(asteroid) {
+            const spacefoxRect = spacefox.element.getBoundingClientRect();
+            const asteroidRect = asteroid.element.getBoundingClientRect();
+
+            return !(asteroidRect.top > spacefoxRect.bottom ||
+                     asteroidRect.bottom < spacefoxRect.top ||
+                     asteroidRect.left > spacefoxRect.right ||
+                     asteroidRect.right < spacefoxRect.left);
         }
 
         function gameLoop() {
@@ -115,13 +124,11 @@
             asteroids.forEach((asteroid, index) => {
                 asteroid.fall();
 
-                if (asteroid.y + asteroid.height > spacefox.y && 
-                    asteroid.x + asteroid.width > spacefox.x && 
-                    asteroid.x < spacefox.x + spacefox.width) {
-                        lives--;
-                        document.querySelector(`.heart${lives+1}`).style.display = 'none';
-                        asteroid.element.remove();
-                        asteroids.splice(index, 1);
+                if (checkCollision(asteroid)) {
+                    lives--;
+                    document.querySelector(`.heart${lives+1}`).style.display = 'none';
+                    asteroid.element.remove();
+                    asteroids.splice(index, 1);
                 }
 
                 if (lives === 0) {
