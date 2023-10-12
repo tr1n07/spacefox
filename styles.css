@@ -6,14 +6,18 @@
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
 \f0\fs24 \cf0 #game-container \{\
-    width: 600px;\
-    height: 800px;\
+    width: 800px;\
+    height: 600px;\
     border: 1px solid black;\
     position: relative;\
     overflow: hidden;\
 \}\
 \
-#spacefox, #asteroid \{\
+#spacefox \{\
+    width: 50px;\
+    height: 50px;\
     position: absolute;\
+    bottom: 0;\
+    left: 375px;\
 \}\
 }
