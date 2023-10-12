@@ -1,33 +1,126 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title>Spacefox Asteroid Escape</title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2022.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; color: #000000; -webkit-text-stroke: #000000}
-    span.s1 {font-kerning: none}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spacefox Game</title>
+    <style>
+        #gameContainer {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            overflow: hidden;
+            background-color: black;
+        }
+
+        .spacefox {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            bottom: 0;
+            background-image: url('spacefox.png');
+            background-size: cover;
+        }
+
+        .asteroid {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-image: url('asteroid.png');
+            background-size: cover;
+        }
+    </style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;title&gt;Spacefox Asteroid Escape&lt;/title&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;link rel="stylesheet" href="styles.css"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div id="game-container"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div id="spacefox"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;img src="images/spacefox.png" alt="Spacefox" width="50" height="50"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script src="game.js"&gt;&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+    <div id="gameContainer"></div>
+
+    <script>
+        const gameContainer = document.getElementById('gameContainer');
+
+        class Spacefox {
+            constructor() {
+                this.element = document.createElement('div');
+                this.element.className = 'spacefox';
+                this.width = 50;
+                this.height = 50;
+                this.x = 175;
+                this.element.style.left = `${this.x}px`;
+                gameContainer.appendChild(this.element);
+            }
+
+            move(direction) {
+                if (direction === 'left' && this.x > 0) {
+                    this.x -= 15;
+                } else if (direction === 'right' && this.x < 350) {
+                    this.x += 15;
+                }
+                this.element.style.left = `${this.x}px`;
+            }
+        }
+
+        class Asteroid {
+            constructor() {
+                this.element = document.createElement('div');
+                this.element.className = 'asteroid';
+                this.width = 50;
+                this.height = 50;
+                this.x = Math.random() * 350;
+                this.y = -50;
+                this.element.style.left = `${this.x}px`;
+                this.element.style.top = `${this.y}px`;
+                gameContainer.appendChild(this.element);
+            }
+
+            fall() {
+                this.y += 5;
+                this.element.style.top = `${this.y}px`;
+
+                if (this.y > 600) {
+                    this.element.remove();
+                }
+            }
+        }
+
+        const spacefox = new Spacefox();
+
+        let asteroids = [];
+        let lives = 3;
+
+        function gameLoop() {
+            if (Math.random() < 0.01) {
+                const asteroid = new Asteroid();
+                asteroids.push(asteroid);
+            }
+
+            asteroids.forEach((asteroid, index) => {
+                asteroid.fall();
+
+                if (asteroid.y + asteroid.height > 550 && 
+                    asteroid.x + asteroid.width > spacefox.x && 
+                    asteroid.x < spacefox.x + spacefox.width) {
+                        lives--;
+                        asteroid.element.remove();
+                        asteroids.splice(index, 1);
+                }
+
+                if (lives === 0) {
+                    alert('Game Over!');
+                    location.reload();
+                }
+            });
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                spacefox.move('left');
+            } else if (e.key === 'ArrowRight') {
+                spacefox.move('right');
+            }
+        });
+    </script>
 </body>
 </html>
